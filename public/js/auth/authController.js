@@ -7,7 +7,7 @@ $(() => {
         const nombres = $('#nombreContactoReg').val();
         const email = $('#emailContactoReg').val();
         const password = $('#passwordReg').val();
-        // TODO : LLamar crear cuenta con email
+        // Crear cuenta con email
         const auth = new Autenticacion()
         auth.crearCuentaEmailPass(email, password, nombres)
     });
@@ -19,6 +19,11 @@ $(() => {
         auth.autEmailPass(email, password)
         // TODO : LLamar auth cuenta con email
     });
+
+    $("#btnRecuperarContrasenia").click(() => {
+        const email = $("#emailRecuperacion").val();
+        objAuth.resetPasswordByEmail(email);
+      });
 
     //Autenticarse con Google
     $("#authGoogle").click(() => objAuth.authCuentaGoogle());
@@ -32,6 +37,11 @@ $(() => {
     $('#btnRegistrarse').click(() => {
         $('#modalSesion').modal('close');
         $('#modalRegistro').modal('open');
+    });
+
+    $('#btnIniciarSesion').click(() => {
+        $('#modalRegistro').modal('close');
+        $('#modalSesion').modal('open');
     });
 
     $('#btnIniciarSesion').click(() => {

@@ -37,7 +37,12 @@ $(() => {
   //
   //$('#avatar').attr('src', 'imagenes/usuario.png')
 
-  // TODO: Evento boton inicio sesion
+  //Recuperar contraseña
+  $("#btnRecordarPassword").click(()=>{
+    $("#modalCambiar").modal("open");
+  })
+
+  // Evento boton inicio sesion
   $('#btnInicioSesion').click(() => {
     const user = firebase.auth().currentUser
     if (user){

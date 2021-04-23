@@ -52,17 +52,29 @@ class Autenticacion {
         Materialize.toast(error.message, 4000)
       });
   }
-
-
-
-    /*Materialize.toast(
-      `Bienvenido ${nombres}, debes realizar el proceso de verificación`,
-      4000
-    )
-
-    $('.modal').modal('close')*/
-    
   
+  resetPasswordByEmail (email) {
+    if(email) {
+      
+      const configuracion = {
+        url: 'http://localhost:3000/'
+      }
+
+      const user = firebase.auth();
+      user.sendPasswordResetEmail(email, configuracion).then(result => {
+        Materialize.toast(
+          `Se ha enviado un correo a ${email}, para reestablecer tu contraseña`,
+          4000
+        )
+        $(".modal").modal("close");
+      }).catch(error => {
+        console.error(error)
+        Materialize.toast(error.message, 4000)
+      });
+    }else{
+      Materialize.toast(`Por favor ingrese su correo`, 4000);
+    }
+  }
 
   authCuentaGoogle () {
     const provider = new firebase.auth.GoogleAuthProvider()
