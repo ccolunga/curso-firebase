@@ -1,19 +1,87 @@
 $(() => {
-  $(".tooltipped").tooltip({ delay: 50 });
+  $(".tooltipped").tooltip({
+    delay: 50
+  });
   $(".modal").modal();
-
-  // TODO: Adicionar el service worker
 
   // Init Firebase nuevamente
   firebase.initializeApp(varConfig);
 
-  // TODO: Registrar LLave publica de messaging
+  // Se registra el service worker
+  navigator.serviceWorker
+    .register('notificaciones-sw.js')
+    .then(registro => {
+      console.log('service worker registrado')
+      firebase.messaging().useServiceWorker(registro)
+    })
+    .catch(error => {
+      console.error(`Error al registrar el service worker => ${error}`)
+    })
 
-  // TODO: Solicitar permisos para las notificaciones
+  const messaging = firebase.messaging()
+
+  // Registrar credenciales web
+  messaging.usePublicVapidKey(
+    'BNXFobbKFCs-uAVxoPSqtgtm9GrVypZwx9n2PdS6GCqynO48xgPL0vUhX5hd9xgawFTRFzvfyYe0tt8f_IcL_-w'
+  )
+
+  // Solicitar permisos para las notificaciones
+  Notification.requestPermission()
+    .then(() => {
+      console.log('permiso otorgado')
+      return messaging.getToken()
+    })
+    .then(token => {
+      console.log('token')
+      console.log(token)
+      const db = firebase.firestore()
+      db
+        .collection('tokens')
+        .doc(token)
+        .set({
+          token: token
+        })
+        .catch(error => {
+          console.error(`Error al insertar el token en la BD => ${error}`)
+        })
+    })
+    .catch(error => {
+      console.error(`Permiso no otorgado => ${error}`)
+    })
+
+  // Obtener el token cuando se refresca
+  messaging.onTokenRefresh(() => {
+    messaging.getToken().then(token => {
+      console.log('token se ha renovado')
+      const db = firebase.firestore()
+      db
+        .collection('tokens')
+        .doc(token)
+        .set({
+          token: token
+        })
+        .catch(error => {
+          console.error(`Error al insertar el token en la BD => ${error}`)
+        })
+    })
+  })
+
+  // Recibir las notificaciones cuando el usuario esta foreground
+  messaging.onMessage(payload => {
+    console.log('mensaje en foreground')
+    Materialize.toast(
+      `Ya tenemos un nuevo post. Revísalo, se llama ${payload.data.titulo}`,
+      6000
+    )
+  })
+
 
   // TODO: Recibir las notificaciones cuando el usuario esta foreground
 
   // TODO: Recibir las notificaciones cuando el usuario esta background
+
+
+
 
   // Listening real time
   const post = new Post();
