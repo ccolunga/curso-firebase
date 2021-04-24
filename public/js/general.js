@@ -1,6 +1,6 @@
 $(() => {
-  $('.tooltipped').tooltip({ delay: 50 })
-  $('.modal').modal()
+  $(".tooltipped").tooltip({ delay: 50 });
+  $(".modal").modal();
 
   // TODO: Adicionar el service worker
 
@@ -15,22 +15,24 @@ $(() => {
 
   // TODO: Recibir las notificaciones cuando el usuario esta background
 
-  // TODO: Listening real time
+  // Listening real time
+  const post = new Post();
+  post.consultarTodosPost();
 
   // TODO: Firebase observador del cambio de estado
-  firebase.auth().onAuthStateChanged(user => {
-    if (user){
-      $('#btnInicioSesion').text('Salir')
-      if(user.photoURL){
-        $('#avatar').attr('src', user.photoURL)
-      }else{
-        $('#avatar').attr('src', 'imagenes/usuario_auth.png')
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      $("#btnInicioSesion").text("Salir");
+      if (user.photoURL) {
+        $("#avatar").attr("src", user.photoURL);
+      } else {
+        $("#avatar").attr("src", "imagenes/usuario_auth.png");
       }
-    }else{
-      $('#btnInicioSesion').text('Iniciar Sesión')
-      $('#avatar').attr('src', 'imagenes/usuario.png')
+    } else {
+      $("#btnInicioSesion").text("Iniciar Sesión");
+      $("#avatar").attr("src", "imagenes/usuario.png");
     }
-  })
+  });
 
   //
   //
@@ -38,45 +40,59 @@ $(() => {
   //$('#avatar').attr('src', 'imagenes/usuario.png')
 
   //Recuperar contraseña
-  $("#btnRecordarPassword").click(()=>{
+  $("#btnRecordarPassword").click(() => {
     $("#modalCambiar").modal("open");
-  })
+  });
 
   // Evento boton inicio sesion
-  $('#btnInicioSesion').click(() => {
-    const user = firebase.auth().currentUser
-    if (user){
-      $('#btnInicioSesion').text('Iniciar sesión')
-      return firebase.auth().signOut().then(() => {
-          $('#avatar').attr('src', 'imagenes/usuario.png')
-          Materialize.toast(`SignOut correcto`, 4000)
-        }).catch(error => {
-          Materialize.toast(`Error al realizar SignOut => ${error}`, 4000)
+  $("#btnInicioSesion").click(() => {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      $("#btnInicioSesion").text("Iniciar sesión");
+      return firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          $("#avatar").attr("src", "imagenes/usuario.png");
+          Materialize.toast(`SignOut correcto`, 4000);
         })
+        .catch((error) => {
+          Materialize.toast(`Error al realizar SignOut => ${error}`, 4000);
+        });
     }
-    
-    $('#emailSesion').val('')
-    $('#passwordSesion').val('')
-    $('#modalSesion').modal('open')
-  })
 
-  $('#avatar').click(() => {
-    firebase.auth().signOut()
+    $("#emailSesion").val("");
+    $("#passwordSesion").val("");
+    $("#modalSesion").modal("open");
+  });
+
+  $("#avatar").click(() => {
+    firebase
+      .auth()
+      .signOut()
       .then(() => {
-        $('#avatar').attr('src', 'imagenes/usuario.png')
-        Materialize.toast(`SignOut correcto`, 4000)
+        $("#avatar").attr("src", "imagenes/usuario.png");
+        Materialize.toast(`SignOut correcto`, 4000);
       })
-      .catch(error => {
-        Materialize.toast(`Error al realizar SignOut ${error}`, 4000)
-      })
-  })
+      .catch((error) => {
+        Materialize.toast(`Error al realizar SignOut ${error}`, 4000);
+      });
+  });
 
-  $('#btnTodoPost').click(() => {
-    $('#tituloPost').text('Posts de la Comunidad')   
-  })
+  $("#btnTodoPost").click(() => {
+    $("#tituloPost").text("Posts de la Comunidad");
+    const post = new Post();
+    post.consultarTodosPost();
+  });
 
-  $('#btnMisPost').click(() => {
-    //$('#tituloPost').text('Mis Posts')
-    //Materialize.toast(`Debes estar autenticado para ver tus posts`, 4000)    
-  })
-})
+  $("#btnMisPost").click(() => {
+    const user = firebase.auth().currentUser;
+    if (user) {
+      const post = new Post();
+      post.consultarPostxUsuario(user.email);
+      $("#tituloPost").text("Mis Posts");
+    } else {
+      Materialize.toast(`Debes estar autenticado para ver tus posts`, 4000);
+    }
+  });
+});
