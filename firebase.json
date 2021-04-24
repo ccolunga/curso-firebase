@@ -12,6 +12,12 @@
         "destination": "/",
         "type": 301
       }
+    ],
+    "rewrites": [
+      {
+        "source": "/**",
+        "destionation": "/index.html"
+      }
     ]
   }
 }
